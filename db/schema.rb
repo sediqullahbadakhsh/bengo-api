@@ -19,7 +19,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_12_010004) do
     t.string "ip_address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["ip_address"], name: "index_search_queries_on_ip_address"
+    t.index ["query"], name: "index_search_queries_on_query"
   end
 
 end

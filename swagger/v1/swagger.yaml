@@ -1,0 +1,60 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/search":
+    get:
+      summary: Searches for something
+      tags:
+        - SearchQueries
+      parameters:
+        - name: query
+          in: query
+          description: The search query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful search
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  query:
+                    type: string
+                  ip_address:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+                required:
+                  - id
+                  - query
+                  - ip_address
+                  - created_at
+                  - updated_at
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+servers:
+  - url: https://{defaultHost}
+    variables:
+      defaultHost:
+        default: www.example.com
