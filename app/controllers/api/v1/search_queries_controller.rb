@@ -6,14 +6,25 @@ class Api::V1::SearchQueriesController < ApplicationController
   # If the query is valid, and the search results are already cached, the cached results are returned.
 
   def search
+    query = params[:query].strip
+    query_with_question_mark = query + (query.end_with?('?') ? '' : '?')
+    query_without_question_mark = query.chomp('?')
+    
     if valid_query?
-      @search_query = SearchQuery.find_or_initialize_by(query: params[:query])
-      @search_query.ip_address = request.remote_ip
-      @search_query.save!
-      response = Rails.cache.fetch(cache_key) do
-        # perform search and generate response
+
+      response = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+        @search_query = SearchQuery.find_by(query: query_with_question_mark) ||
+        SearchQuery.find_by(query: query_without_question_mark)
       end
-      render json: response
+
+      if @search_query.nil?
+        # If the query doesn't exist, create a new one and save the user's IP
+        @search_query = SearchQuery.new(query: query, ip_address: request.remote_ip)
+        @search_query.save!
+      end
+
+
+      render json: response, status: :ok
     else
       render json: { error: "Invalid query" }, status: :bad_request
     end
