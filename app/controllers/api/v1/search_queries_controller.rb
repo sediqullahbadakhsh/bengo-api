@@ -1,9 +1,10 @@
 class Api::V1::SearchQueriesController < ApplicationController
 
   # This method is called when a user searches for something.
-  # If the query is valid, and not chaced, it is saved in the database.
+  # If the query is valid, and not exist, it is saved in the database.
   # If the query is invalid, an error message is returned.
   # If the query is valid, and the search results are already cached, the cached results are returned.
+  # If the query is valid and the ip is different, it is saved in the database for analytics.
 
   def search
     query = params[:query].strip
