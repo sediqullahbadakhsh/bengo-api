@@ -1,0 +1,9 @@
+inherit_from: .rubocop_todo.yml
+
+# .rubocop.yml
+require: rubocop-rails
+AllCops:
+  Exclude:
+    - "config/initializers/swagger_docs.rb"
+Style/FrozenStringLiteralComment:
+  Enabled: true
