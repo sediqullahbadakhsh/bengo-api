@@ -8,16 +8,16 @@ paths:
     get:
       summary: Searches for something
       tags:
-        - SearchQueries
+      - SearchQueries
       parameters:
-        - name: query
-          in: query
-          description: The search query
-          required: true
-          schema:
-            type: string
+      - name: query
+        in: query
+        description: The search query
+        required: true
+        schema:
+          type: string
       responses:
-        "200":
+        '200':
           description: successful search
           content:
             application/json:
@@ -37,24 +37,136 @@ paths:
                     type: string
                     format: date-time
                 required:
-                  - id
-                  - query
-                  - ip_address
-                  - created_at
-                  - updated_at
-        "400":
+                - id
+                - query
+                - ip_address
+                - created_at
+                - updated_at
+    post:
+      summary: Creates a new search query
+      tags:
+      - SearchQueries
+      parameters: []
+      responses:
+        '201':
+          description: search query created
+        '400':
           description: bad request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  description: The search query
+                  example: What is the weather like today?
+                ip_address:
+                  type: string
+                  description: The IP address of the user who made the search
+                  example: 192.168.1.1
+              required:
+              - query
+              - ip_address
+  "/api/v1/search/most_asked_by_users":
+    get:
+      summary: Retrieves the most frequently asked queries by users
+      tags:
+      - SearchQueries
+      responses:
+        '200':
+          description: successful request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    query:
+                      type: string
+                    counter:
+                      type: integer
+                    occurrences:
+                      type: integer
+                  required:
+                  - query
+                  - counter
+                  - occurrences
+  "/api/v1/search/top_keywords":
+    get:
+      summary: Gets top searched keywords within specified time range
+      tags:
+      - SearchQueries
+      parameters:
+      - name: time_range
+        in: query
+        description: Time range to filter search queries (year/month/week/today)
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Number of top keywords to be returned
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: returns top searched keywords
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  word:
                     type: string
+                  count:
+                    type: integer
                 required:
-                  - error
+                - word
+                - count
+  "/api/v1/search/searches_by_hour_in_week":
+    get:
+      summary: Searches by hour in the week
+      tags:
+      - SearchQueries
+      responses:
+        '200':
+          description: successful search by hour in the week
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  '0':
+                    type: object
+                    properties:
+                      '0':
+                        type: integer
+                      '1':
+                        type: integer
+                      '23':
+                        type: integer
+                  '1':
+                    type: object
+                    properties:
+                      '0':
+                        type: integer
+                      '1':
+                        type: integer
+                      '23':
+                        type: integer
+                  '6':
+                    type: object
+                    properties:
+                      '0':
+                        type: integer
+                      '1':
+                        type: integer
+                      '23':
+                        type: integer
 servers:
-  - url: https://{defaultHost}
-    variables:
-      defaultHost:
-        default: www.example.com
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: www.example.com
