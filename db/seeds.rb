@@ -30,3 +30,16 @@ end
   SearchQuery.create!(query: 'What it takes to be part of Helpjuice Amazing team?',
                       ip_address: Faker::Internet.ip_v4_address, counter: 1)
 end
+
+20.times do
+  SearchQuery.create!(query: 'How to become a Helpjuice developer?', ip_address: Faker::Internet.ip_v4_address,
+                      counter: 1)
+end
+30.times do
+  SearchQuery.create!(query: 'What is the best programming language?', ip_address: Faker::Internet.ip_v4_address,
+                      counter: 1)
+end
+
+15.times do
+  SearchQuery.create!(query: 'What is SQL?', ip_address: Faker::Internet.ip_v4_address, counter: 1)
+end

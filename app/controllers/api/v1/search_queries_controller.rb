@@ -49,7 +49,8 @@ module Api
       def keywords
         time_range = params[:time_range] || 'today'
         limit = params[:limit].to_i || 5
-
+        word_list = ["react", "emil", "ruby", "ruby on rails", "redux","helpjuice", "service", "company", "developer", "Javascript", "sql","programming", "language"] # your list of words
+      
         start_time =
           case time_range
           when 'year' then 1.year.ago
@@ -57,18 +58,19 @@ module Api
           when 'week' then 1.week.ago
           else Time.zone.now.beginning_of_day
           end
-
+      
         queries = SearchQuery.where(created_at: start_time..Time.current)
         words = queries.map(&:query).flat_map { |q| q.scan(/\w+/) }
-        keywords = words.select { |word| word.length > 3 }
+        keywords = words.select { |word| word_list.include?(word.downcase) }
                         .group_by(&:downcase)
                         .transform_values(&:size)
                         .sort_by { |_, count| -count }
                         .first(limit)
-                        .map { |word, count| { word:, count: } }
-
+                        .map { |word, count| { word: word.capitalize, count: count } }
+      
         render json: keywords
       end
+      
 
       def searches_by_hour_in_week
         start_time = 1.week.ago
