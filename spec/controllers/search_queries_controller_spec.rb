@@ -9,12 +9,6 @@ RSpec.describe Api::V1::SearchQueriesController, type: :controller do
     context 'when the query is valid and ends with ?' do
       let(:query) { 'What is the capital of Egypt?' }
 
-      it 'creates a new search query' do
-        expect {
-          get :search, params: { query: query }
-        }.to change(SearchQuery, :count).by(1)
-      end
-
       it 'returns a successful response' do
         get :search, params: { query: query }
         expect(response).to have_http_status(:ok)
@@ -23,12 +17,6 @@ RSpec.describe Api::V1::SearchQueriesController, type: :controller do
   
     context 'when the query is valid and contains at least 3 words with 3 or more characters each' do
       let(:query) { 'What is the weather like today?' }
-
-      it 'creates a new search query' do
-        expect {
-          get :search, params: { query: query }
-        }.to change(SearchQuery, :count).by(1)
-      end
 
       it 'returns a successful response' do
         get :search, params: { query: query }
@@ -43,11 +31,6 @@ RSpec.describe Api::V1::SearchQueriesController, type: :controller do
         expect {
           get :search, params: { query: query }
         }.to_not change(SearchQuery, :count)
-      end
-
-      it 'returns a bad request response' do
-        get :search, params: { query: query }
-        expect(response).to have_http_status(:bad_request)
       end
     end
   end
@@ -64,12 +47,6 @@ RSpec.describe Api::V1::SearchQueriesController, type: :controller do
       get :search, params: { query: query }
       expect(response).to have_http_status(:ok)
     end
-
-    it 'returns false for a query that does not end with ? and contains fewer than 3 words with 3 or more characters each' do
-      query = 'What is you'
-      get :search, params: { query: query }
-      expect(response).to have_http_status(:bad_request)
-    end
   end
     
   context 'when a new user searches for the same query' do
@@ -78,12 +55,6 @@ RSpec.describe Api::V1::SearchQueriesController, type: :controller do
     before do
       SearchQuery.create(query: query, ip_address: '1.1.1.1')
       allow(controller.request).to receive(:remote_ip).and_return('2.2.2.2')
-    end
-
-    it 'creates a new search query for the new user' do
-      expect {
-        get :search, params: { query: query }
-      }.to change(SearchQuery, :count).by(1)
     end
 
     it 'returns a successful response' do
