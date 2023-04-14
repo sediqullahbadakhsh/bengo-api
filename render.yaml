@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: bengo
+    env: ruby
+    buildCommand: bundle install
+    startCommand: bundle exec rails server -p $PORT
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_MASTER_KEY
+        value: 193cd515fe52cc3dae4effbfc7b8caa0
+    healthCheckPath: /your_health_check_path
+    autoDeploy: true
+    numInstances: 1
+    cpu: 0.25
+    memory: 0.5GB
+
+databases:
+  - name: your-app-name-db
+    type: postgres
+    version: 12
+    diskSize: 5GB
