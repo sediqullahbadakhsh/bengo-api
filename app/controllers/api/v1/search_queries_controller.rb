@@ -47,9 +47,9 @@ module Api
       end
 
       def keywords
-        time_range = params[:time_range] || 'today'
+        time_range = params[:time_range] || 'week'
         limit = params[:limit].to_i || 5
-        word_list = ["react", "emil", "ruby", "ruby on rails", "redux","helpjuice", "service", "company", "developer", "Javascript", "sql","programming", "language"] # your list of words
+        word_list = ["react", "emil", "ruby", "ruby on rails", "redux","helpjuice", "service", "company", "developer", "Javascript", "sql","programming", "language"]
       
         start_time =
           case time_range
@@ -62,16 +62,16 @@ module Api
         queries = SearchQuery.where(created_at: start_time..Time.current)
         words = queries.map(&:query).flat_map { |q| q.scan(/\w+/) }
         keywords = words.select { |word| word_list.include?(word.downcase) }
-                        .group_by(&:downcase)
-                        .transform_values(&:size)
-                        .sort_by { |_, count| -count }
-                        .first(limit)
-                        .map { |word, count| { word: word.capitalize, count: count } }
+                          .group_by(&:downcase)
+                          .transform_values(&:size)
+                          .sort_by { |_, count| -count }
+                          .first(limit)
+                          .map { |word, count| { word: word.capitalize, count: count } }
+      puts keywords
+          render json: keywords
+        end
       
-        render json: keywords
-      end
       
-
       def searches_by_hour_in_week
         start_time = 1.week.ago
         end_time = Time.zone.now
@@ -93,14 +93,14 @@ module Api
         (0..6).each do |dow|
           dow_name = Date::DAYNAMES[dow].slice(0, 3).downcase
           (0..23).each do |hour|
-            results << { "#{dow_name}-#{hour}": search_counts.find { |c| c.dow == dow && c.hour == hour }&.count || 0 }
+            count = search_counts.find { |c| c.dow == dow && c.hour == hour }&.count || 0
+            results << { time: "#{dow_name}-#{hour}", count: count }
           end
         end
       
         render json: results
       end
       
-
       private
 
       def search_query_params
