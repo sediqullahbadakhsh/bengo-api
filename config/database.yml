@@ -15,7 +15,6 @@ test:
   <<: *default
   database: bengo_test
 
-
 production:
   <<: *default
   database: bengo_production
