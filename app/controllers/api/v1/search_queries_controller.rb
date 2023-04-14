@@ -75,36 +75,31 @@ module Api
       def searches_by_hour_in_week
         start_time = 1.week.ago
         end_time = Time.zone.now
-
+      
         # Group search queries by hour in the week
         query = <<-SQL
-      SELECT EXTRACT(DOW FROM created_at) AS dow,
-             EXTRACT(HOUR FROM created_at) AS hour,
-             COUNT(*) AS count
-      FROM search_queries
-      WHERE created_at BETWEEN '#{start_time}' AND '#{end_time}'
-      GROUP BY EXTRACT(DOW FROM created_at), EXTRACT(HOUR FROM created_at)
+          SELECT EXTRACT(DOW FROM created_at) AS dow,
+                 EXTRACT(HOUR FROM created_at) AS hour,
+                 COUNT(*) AS count
+          FROM search_queries
+          WHERE created_at BETWEEN '#{start_time}' AND '#{end_time}'
+          GROUP BY EXTRACT(DOW FROM created_at), EXTRACT(HOUR FROM created_at)
         SQL
-
+      
         search_counts = SearchQuery.find_by_sql(query)
-
-        # Convert results to a hash of hashes
-        results = {}
-        7.times do |dow|
-          results[dow] = {}
-          24.times do |hour|
-            results[dow][hour] = 0
+      
+        # Convert results to an array of objects
+        results = []
+        (0..6).each do |dow|
+          dow_name = Date::DAYNAMES[dow].slice(0, 3).downcase
+          (0..23).each do |hour|
+            results << { "#{dow_name}-#{hour}": search_counts.find { |c| c.dow == dow && c.hour == hour }&.count || 0 }
           end
         end
-
-        search_counts.each do |count|
-          dow = count.dow.to_i
-          hour = count.hour.to_i
-          results[dow][hour] = count.count.to_i
-        end
-
+      
         render json: results
       end
+      
 
       private
 
