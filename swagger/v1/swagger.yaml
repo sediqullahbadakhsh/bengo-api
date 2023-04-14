@@ -169,4 +169,4 @@ servers:
 - url: https://{defaultHost}
   variables:
     defaultHost:
-      default: www.bengo.onrender.com
+      default: bengo.onrender.com
