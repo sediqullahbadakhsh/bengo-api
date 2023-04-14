@@ -83,6 +83,4 @@ test:
 #
 production:
   <<: *default
-  database: bengo_production
-  username: bengo
-  password: <%= ENV["BENGO_DATABASE_PASSWORD"] %>
+  url: <%= ENV['DATABASE_URL'] %>

@@ -2,14 +2,17 @@ services:
   - type: web
     name: bengo
     env: ruby
-    buildCommand: bundle install
-    startCommand: bundle exec rails db:migrate db:seed && bundle exec rails server -p $PORT
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
     envVars:
-      - key: RAILS_ENV
-        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mysite
+          property: connectionString
       - key: RAILS_MASTER_KEY
-        value: 193cd515fe52cc3dae4effbfc7b8caa0
-    autoDeploy: true
+        sync: false
 
 databases:
-  - name: bengo_db
+  - name: bengo
+    databaseName: beno_db
+    user: bengo
