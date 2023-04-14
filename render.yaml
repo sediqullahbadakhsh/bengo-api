@@ -9,9 +9,7 @@ services:
         value: production
       - key: RAILS_MASTER_KEY
         value: 193cd515fe52cc3dae4effbfc7b8caa0
-    healthCheckPath: /your_health_check_path
     autoDeploy: true
-    numInstances: 1
 
 databases:
   - name: bengo_db
