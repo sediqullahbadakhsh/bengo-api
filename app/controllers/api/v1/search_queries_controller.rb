@@ -26,7 +26,7 @@ module Api
 
         if valid_query?
           # Find the existing query by the same user, or initialize a new one
-          @search_query = SearchQuery.find_or_initialize_by(query:, ip_address:)
+          @search_query = SearchQuery.find_or_initialize_by(query: query, ip_address: ip_address)
 
           # Increment the counter if the record exists, or set it to 1 for a new record
           @search_query.counter += 1
@@ -114,7 +114,6 @@ module Api
         query = search_query_params[:query]
         return false if query.blank?
         return true if query.end_with?('?')
-
         words = query.scan(/\w+/)
         words_with_3_or_more_chars = words.select { |word| word.length >= 3 }
         return true if words_with_3_or_more_chars.size >= 3
